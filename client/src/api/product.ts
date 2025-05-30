@@ -1,4 +1,4 @@
-import type { CREATE_PRODUCT_TYPE } from "@/types";
+import type { CREATE_PRODUCT_TYPE, PRODUCT_RESPONSE } from "@/types";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
@@ -22,3 +22,13 @@ export const createProductApi = async (payload: CREATE_PRODUCT_TYPE): Promise<vo
     throw new Error(error.message || "Failed to create product");
   }
 };
+export const getProductsApi = async ():Promise<PRODUCT_RESPONSE>=>{
+  const response = await fetch(`${baseURL}`);
+  return response.json();
+}
+export const deleteProductApi = async (id: string): Promise<void> => {
+  const response = await fetch(`${baseURL}/${id}`, {
+    method: "DELETE",
+  });
+ await response.json();
+}

@@ -22,10 +22,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { createProductApi } from "@/api/product";
 import type { CREATE_PRODUCT_TYPE } from "@/types";
-import { toast } from "sonner";
+import { useCreateProduct } from "@/hooks/use-product";
 
 const createProductSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -52,21 +50,12 @@ export const CreateProductDialog = () => {
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: (data: CREATE_PRODUCT_TYPE) => createProductApi(data),
-    onSuccess: () => {
-      toast.success("Product created successfully!");
-      form.reset();
-      setPreview(null);
-      setOpen(false);
-    },
-    onError: (error: any) => {
-      toast.error(error.message);
-    },
-  });
+  const mutation = useCreateProduct ();
 
   const onSubmit = (data: CREATE_PRODUCT_TYPE) => {
     mutation.mutate(data);
+    setOpen(false);
+    form.reset();
   };
 
   return (
@@ -132,32 +121,33 @@ export const CreateProductDialog = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Image</FormLabel>
-                  <FormControl>
-                    <>
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          field.onChange(e.target.files);
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              setPreview(reader.result as string);
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                      />
-                      {preview && (
-                        <img
-                          src={preview}
-                          alt="Preview"
-                          className="mt-2 rounded-md border max-h-48"
-                        />
-                      )}
-                    </>
-                  </FormControl>
+            <FormControl>
+  <div>
+    <Input
+      type="file"
+      accept="image/*"
+      onChange={(e) => {
+        const file = e.target.files?.[0];
+        field.onChange(e.target.files);
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setPreview(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+        }
+      }}
+    />
+    {preview && (
+      <img
+        src={preview}
+        alt="Preview"
+        className="mt-2 rounded-md border max-h-48"
+      />
+    )}
+  </div>
+</FormControl>
+
                   <FormMessage />
                 </FormItem>
               )}

@@ -1,4 +1,5 @@
 import { CreateProduct } from "@/components/organisms/create-product"
+import { HomeProducts } from "../organisms/home-product"
 
 const Home = () => {
   return (
@@ -9,7 +10,7 @@ const Home = () => {
 
 <CreateProduct/>
 
-
+<HomeProducts/>
     </div>
   )
 }

@@ -1,5 +1,6 @@
 
 import {
+    DeleteObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
@@ -39,7 +40,20 @@ export const uploadToS3  = async (file) => {
 
 
 
-
+export const deleteFromS3 = async (key) => {
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: key,
+    };
+    try {
+        const command = new DeleteObjectCommand(params);
+        await s3Client.send(command);
+        console.log(`File deleted successfully from S3: ${key}`);
+    } catch (error) {
+        console.error("Error deleting file from S3:", error);
+        throw new Error("Failed to delete file from S3");
+    }
+}
 
 
 
